@@ -1,0 +1,5 @@
+__pycache__/
+speech/
+.env
+code/grade-based-facts.ipynb
+dump/
