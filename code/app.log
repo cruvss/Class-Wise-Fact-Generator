@@ -175,3 +175,35 @@
 2025-02-12 17:13:48,249 - main - INFO - Speech saved to audio_files\ta-IN_4.wav
 2025-02-12 17:13:57,141 - main - INFO - Speech saved to audio_files\ml-IN_5.wav
 2025-02-12 17:13:57,434 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-13 16:54:53,627 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-13 16:54:56,846 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+2025-02-13 16:54:56,846 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-13 16:55:32,095 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-13 16:55:33,757 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+2025-02-13 16:55:33,758 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-13 16:56:10,975 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-13 16:56:13,459 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+2025-02-13 16:56:13,459 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-13 16:57:03,143 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-13 16:57:04,389 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+2025-02-13 16:57:04,389 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-13 16:57:12,704 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-13 16:57:14,694 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+2025-02-13 16:57:14,696 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-13 16:57:43,254 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-13 16:57:44,737 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+2025-02-13 16:57:44,737 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-13 17:00:31,832 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-13 17:00:34,167 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+2025-02-13 17:00:34,167 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-13 17:00:39,902 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-13 17:00:41,526 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+2025-02-13 17:00:41,526 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-13 17:03:39,763 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-13 17:03:42,031 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-13 17:03:52,785 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-13 17:03:56,649 - main - INFO - Speech saved to audio_files\en-US_1.wav
+2025-02-13 17:04:00,993 - main - INFO - Speech saved to audio_files\en-IN_2.wav
+2025-02-13 17:04:10,395 - main - INFO - Speech saved to audio_files\ar-AE_3.wav
+2025-02-13 17:04:17,965 - main - INFO - Speech saved to audio_files\ta-IN_4.wav
+2025-02-13 17:04:18,251 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"

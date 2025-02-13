@@ -309,7 +309,7 @@ def respons_to_tts(response):
 # This is to extract only text and tone from the responese 
 
 
-# Endpoint to generate facts and convert them to audio
+# Endpoint to   generate facts and convert them to audio
 @app.post("/generate-facts", response_model=FactResponse)
 async def generate_facts(request: FactRequest):
     try:
