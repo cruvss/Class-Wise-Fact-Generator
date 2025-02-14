@@ -63,12 +63,18 @@ class FactRequest(BaseModel):
             }
         }
 
+# class FactResponse(BaseModel):
+#     facts: List[str]
+#     grade_level: int
+#     timestamp: str
+#     audio_url: str  
+
 class FactResponse(BaseModel):
     facts: List[str]
     grade_level: int
     timestamp: str
-    audio_url: str  
-
+    audio_urls: List[str]  # Changed from audio_url to audio_urls
+    
 class AudioRequest(BaseModel):
     text: List[str]
     tone: List[str] 
@@ -82,7 +88,7 @@ class AudioRequest(BaseModel):
         }
 
 class AudioResponse(BaseModel):
-    audio_url: str
+    audio_url: List[str]
     timestamp: str
 
 # Class ResponseGenereator is used to generate the response for the given topic and grade level its for fact generation.
@@ -109,7 +115,7 @@ class ResponseGenerator:
                 System Message:
                 "You are an expert educator who provides structured facts indeatil in paragrpahs tailored to students of different grade levels. Each fact should be engaging, structured, and appropriate for the given class level. 
                 Additionally, define the tone of narration explicitly for each fact so that it can be used for Text-to-Speech (TTS) conversion. 
-                Please restrict tones to 'sad', 'depressed', 'hopeful','terrified', or 'serious'."
+                Please restrict tones to 'friendly', 'chat', 'excited','terrified', or 'serious'."
     
                 User Prompt:
                 "Generate structured and engaging facts about Newton for a Grade 1 student. Each fact paragraph should include a tone definition that describes how it should be narrated for clarity and engagement."
@@ -260,28 +266,21 @@ class ResponseGenerator:
             print(f"Error generating response: {str(e)}")
             return None
 
-# Text-to-Speech function using Azure TTS
-def text_to_speech(texts: List[str], tones: List[str], voice: str = 'en-US-NancyNeural', output_file: str = "output.wav") -> None:
+
+def text_to_speech(text: str, tone: str, voice: str = 'en-US-NancyNeural', output_file: str = "output.wav") -> None:
     try:
-        audio_config = speechsdk.audio.AudioOutputConfig(filename=output_file) #output file is the file where the audio will be saved
+        audio_config = speechsdk.audio.AudioOutputConfig(filename=output_file)
         synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
-        #the role of synthesizer is to convert the text to speech using the given configuration
         
-        
-        
-        ssml = '<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-US">'
-        for text, tone in zip(texts,tones):
-            ssml += f"""
-                <voice name="{voice}">
-                    <mstts:express-as style="{tone}" styledegree="2">
-                        {text}
-                    </mstts:express-as>
-                </voice>
-            """
-        ssml+= "</speak>"
-        
-        #now the main task of conversion of text to speech with specific tone is done by the ssml which stands for
-        #Speech Synthesis Markup Language 
+        ssml = f'''
+        <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-US">
+            <voice name="{voice}">
+                <mstts:express-as style="{tone}" styledegree="2">
+                    {text}
+                </mstts:express-as>
+            </voice>
+        </speak>
+        '''
         
         result = synthesizer.speak_ssml_async(ssml).get()
         
@@ -296,7 +295,6 @@ def text_to_speech(texts: List[str], tones: List[str], voice: str = 'en-US-Nancy
         raise HTTPException(status_code=500, detail=f"Error in text_to_speech: {str(e)}")
 
 
-
 def respons_to_tts(response):
     texts=[]
     tones=[]
@@ -309,7 +307,6 @@ def respons_to_tts(response):
 # This is to extract only text and tone from the responese 
 
 
-# Endpoint to   generate facts and convert them to audio
 @app.post("/generate-facts", response_model=FactResponse)
 async def generate_facts(request: FactRequest):
     try:
@@ -325,7 +322,7 @@ async def generate_facts(request: FactRequest):
         if not generated_facts:
             raise HTTPException(status_code=500, detail="Failed to generate facts")
         
-        texts,tones = respons_to_tts(generated_facts)
+        texts, tones = respons_to_tts(generated_facts)
         
         # Step 2: Call the /convert-to-audio endpoint asynchronously
         async with httpx.AsyncClient() as client:
@@ -338,51 +335,58 @@ async def generate_facts(request: FactRequest):
             raise HTTPException(status_code=500, detail="Failed to convert text to audio")
         
         audio_data = audio_response.json()
-        audio_url = audio_data.get("audio_url")
+        audio_urls = audio_data.get("audio_url")
 
-        # Step 3: Return the facts and audio URL
+        # Step 3: Return the facts and audio URLs
         return FactResponse(
-            facts= texts,
+            facts=texts,
             grade_level=request.grade_level,
             timestamp=datetime.now().isoformat(),
-            audio_url=audio_url
+            audio_urls=audio_urls  # Return the list of audio URLs
         )
     
     except Exception as e:
         logger.error(f"Error generating facts: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error generating facts: {str(e)}")
-    
+        raise HTTPException(status_code=500, detail=f"Error generating facts: {str(e)}")  
 
-    
-# Endpoint to convert text to audio
+
 @app.post("/convert-to-audio", response_model=AudioResponse)
 async def convert_to_audio(request: AudioRequest):
     try:
         logger.info(f"Converting text to audio. Text length: {len(request.text)} characters")
         
-        voices = [ 'en-US-AriaNeural','en-IN-NeerjaNeural', 'ar-AE-FatimaNeural', 'ta-IN-PallaviNeural']
-        # we will convert the text to audio into 5 different voices/accents 
+        voices = ['ar-EG-ShakirNeural','ta-LK-KumarNeural','en-US-AriaNeural','en-IN-NeerjaNeural','ml-IN-SobhanaNeural','bn-IN-TanishaaNeural']
+        
+        #where
+        # voices = {
+        #     "ar-EG-ShakirNeural": "Arabic",
+        #     "ta-LK-KumarNeural": "Tamil",
+        #     "en-US-JasonNeural": "English",
+        #     "en-IN-NeerjaNeural": "Indian English",
+        #     "ml-IN-SobhanaNeural": "Malayalam",
+        #     "bn-IN-TanishaaNeural": "Bengali"
+        # }
 
+        
         # Ensure the audio_files directory exists
         os.makedirs("audio_files", exist_ok=True)
 
-        audio_files = [] #all the audio file Url will be stored here
+        audio_files = []  # All the audio file URLs will be stored here
 
-        for i, voice in enumerate(voices, start=1):
-            language_region = "-".join(voice.split('-')[:2])
+        for i, (text, tone) in enumerate(zip(request.text, request.tone)):
+            for j, voice in enumerate(voices, start=1):
+                language_region = "-".join(voice.split('-')[:2])
+                audio_filename = f"{language_region}_{i}_{j}.wav"
+                audio_file_path = os.path.join("audio_files", audio_filename)
 
+                # Convert text to speech
+                text_to_speech(text, tone, voice=voice, output_file=audio_file_path)
 
-            audio_filename = f"{language_region}_{i}.wav"
-            audio_file_path = os.path.join("audio_files", audio_filename)
-
-            # Convert text to speech
-            text_to_speech(request.text, request.tone, voice=voice, output_file=audio_file_path)
-
-            # Store the generated audio URL
-            audio_files.append(f"{FastAPI_URL}/audio_files/{audio_filename}")
+                # Store the generated audio URL
+                audio_files.append(f"{FastAPI_URL}/audio_files/{audio_filename}")
         
         return AudioResponse(
-            audio_url=audio_files[0],   # but we will return only the first audio file URL others will be stored in audio_files
+            audio_url=audio_files,  # Return all audio file URLs
             timestamp=datetime.now().isoformat()
         )
     

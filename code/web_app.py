@@ -27,9 +27,9 @@ if st.button("Generate Facts"):
         
         # Display audio player
         st.subheader("Generated Audio:")
-        audio_url = data["audio_url"]  
-        st.write(f"Audio URL: {audio_url}")  
-        st.audio(audio_url, format="audio/wav") 
+        audio_urls = data["audio_urls"]  
+        st.write(f"Displaying the First Audio URL: {audio_urls[0]}")  
+        st.audio(audio_urls[0], format="audio/wav") 
     
     else:
         st.error("Failed to generate facts. Please check the FastAPI server.")
