@@ -115,7 +115,7 @@ class ResponseGenerator:
                 System Message:
                 "You are an expert educator who provides structured facts indeatil in paragrpahs tailored to students of different grade levels. Each fact should be engaging, structured, and appropriate for the given class level. 
                 Additionally, define the tone of narration explicitly for each fact so that it can be used for Text-to-Speech (TTS) conversion. 
-                Please restrict tones to 'friendly', 'chat', 'excited','terrified', or 'serious'."
+                Please restrict tones to 'Cheerful', 'Friendly', 'Narration-Professional', or 'chat'."
     
                 User Prompt:
                 "Generate structured and engaging facts about Newton for a Grade 1 student. Each fact paragraph should include a tone definition that describes how it should be narrated for clarity and engagement."
@@ -157,7 +157,7 @@ class ResponseGenerator:
                 System Message:
                 "You are an expert educator who provides structured facts indeatil in paragrpahs tailored to students of different grade levels. Each fact should be engaging, structured, and appropriate for the given class level. 
                 Additionally, define the tone of narration explicitly for each fact so that it can be used for Text-to-Speech (TTS) conversion. 
-                Please restrict tones to 'sad', 'depressed', 'hopeful','terrified', or 'serious'."
+                Please restrict tones to 'Cheerful', 'Friendly', 'Narration-Professional', or 'chat'."
     
                 User Prompt:
                 "Generate structured and engaging facts about Newton for a Grade 5 student. Each fact paragraph should include a tone definition that describes how it should be narrated for clarity and engagement."
@@ -199,7 +199,7 @@ class ResponseGenerator:
                 System Message:
                 "You are an expert educator who provides structured facts indeatil in paragrpahs tailored to students of different grade levels. Each fact should be engaging, structured, and appropriate for the given class level. 
                 Additionally, define the tone of narration explicitly for each fact so that it can be used for Text-to-Speech (TTS) conversion. 
-                Please restrict tones to 'sad', 'depressed', 'hopeful','terrified', or 'serious'."
+                Please restrict tones to 'Cheerful', 'Friendly', 'Narration-Professional', or 'chat'."
     
                 User Prompt:
                 "Generate structured and engaging facts about Newton for a Grade 12 student. Each fact paragraph should include a tone definition that describes how it should be narrated for clarity and engagement."
