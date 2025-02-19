@@ -8,6 +8,8 @@ import json
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
+from typing import Optional, Dict
+from openai import OpenAI
 import httpx
 
 from openai import OpenAI # this is for generating facts
@@ -42,7 +44,7 @@ AZURE_SERVICE_REGION = "eastus"
 speech_config = speechsdk.SpeechConfig(subscription=AZURE_SPEECH_KEY, region=AZURE_SERVICE_REGION)
 
 # OpenAI Configuration
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = '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' #os.getenv("OPENAI_API_KEY")
 OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
 
 # Below we have defined the Pydantic mode for the request and response of the API 
@@ -54,36 +56,35 @@ OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
 class FactRequest(BaseModel):
     topic: str
     grade_level: int
+    language : str 
     
     class Config:
         json_schema_extra = {
             "example": {
                 "topic": "Newton",
-                "grade_level": 5
+                "grade_level": 5,
+                "language": "English" # now we have added language field in the request itself
             }
         }
-
-# class FactResponse(BaseModel):
-#     facts: List[str]
-#     grade_level: int
-#     timestamp: str
-#     audio_url: str  
 
 class FactResponse(BaseModel):
     facts: List[str]
     grade_level: int
     timestamp: str
     audio_urls: List[str]  # Changed from audio_url to audio_urls
+    tones: List[str]  # also tones is added in the response for you to visuzliase 
     
 class AudioRequest(BaseModel):
     text: List[str]
-    tone: List[str] 
+    tone: List[str]
+    language : str  # this is added in the request itself
     
     class Config:
         json_schema_extra = {
             "example": {
                 "text": ["Newton discovered gravity."],
-                "tone": ["happy"]
+                "tone": ["happy"],
+                "language": "Hindi"
             }
         }
 
@@ -91,7 +92,6 @@ class AudioResponse(BaseModel):
     audio_url: List[str]
     timestamp: str
 
-# Class ResponseGenereator is used to generate the response for the given topic and grade level its for fact generation.
 class ResponseGenerator:
     def __init__(
         self, 
@@ -102,156 +102,184 @@ class ResponseGenerator:
             base_url=base_url,
             api_key=api_key
         )
-
-    def generate_response(self, topic: str, grade_level: str, model: str = "openai/gpt-4o-mini") -> Optional[str]:
-        """
-        Generate structured and engaging facts about the topic for the specified grade level,
-        with tone definitions for TTS (Text-to-Speech) conversion.
-        """
-        try:
-            grade=int(grade_level)
-            if grade<5:
-                one_shot_example = """
-                System Message:
-                "You are an expert educator who provides structured facts indeatil in paragrpahs tailored to students of different grade levels. Each fact should be engaging, structured, and appropriate for the given class level. 
+        
+        # Language-specific templates
+        self._language_templates = {
+            "english": {
+                "system_msg": """You are an expert educator who provides structured facts in English tailored to students of different grade levels. 
+                Each fact should be engaging, structured, and appropriate for the given class level.
                 Additionally, define the tone of narration explicitly for each fact so that it can be used for Text-to-Speech (TTS) conversion. 
-                Please restrict tones to 'Cheerful', 'Friendly', 'Narration-Professional', or 'chat'."
-    
-                User Prompt:
-                "Generate structured and engaging facts about Newton for a Grade 1 student. Each fact paragraph should include a tone definition that describes how it should be narrated for clarity and engagement."
-                
-                Example Output 1:
+                Please restrict tones to 'cheerful','narration-professional', 'friendly' or 'chat'."""
+            },
+            "hindi": {
+                "system_msg": """आप एक विशेषज्ञ शिक्षक हैं जो विभिन्न कक्षा स्तरों के छात्रों के लिए हिंदी में संरचित तथ्य प्रदान करते हैं।
+                प्रत्येक तथ्य आकर्षक, संरचित और दी गई कक्षा के स्तर के लिए उपयुक्त होना चाहिए।
+                साथ ही, प्रत्येक तथ्य के लिए कथन का स्वर स्पष्ट रूप से परिभाषित करें।
+                कृपया स्वर को 'cheerful','narration-professional', 'friendly', या 'chat' तक सीमित रखें।"""
+            }
+        }
+
+    def _get_example_by_grade(self, grade: int, language: str) -> str:
+        """Get appropriate example based on grade level and language."""
+        lang = language.lower()
+        
+        if lang == "hindi":
+            if grade < 5:
+                return """
+                {
+                    "topic": "न्यूटन",
+                    "grade_level": "प्राथमिक विद्यालय",
+                    "facts": [
+                        {
+                            "fact": "क्या आप जानते हैं कि आइजैक न्यूटन बिल्कुल आपकी तरह थे - दुनिया के बारे में बहुत जिज्ञासु? जब वे बच्चे थे, वे हमेशा सवाल पूछते थे और जानना चाहते थे कि चीजें कैसे काम करती हैं। उनकी जिज्ञासा ने उन्हें विज्ञान में कुछ सबसे बड़ी खोजें करने में मदद की।",
+                            "tone": "cheerful"
+                        },
+                        {
+                            "fact": "क्या आपने कभी पेड़ से सेब गिरते देखा है? एक दिन, न्यूटन ने भी ऐसा ही देखा! उन्होंने सोचा - चीजें हमेशा नीचे क्यों गिरती हैं? वे आसमान में क्यों नहीं उड़ती? इस सवाल ने उन्हें गुरुत्वाकर्षण की खोज की ओर ले गया!",
+                            "tone": "friendly"
+                        }
+                    ]
+                }"""
+            elif grade < 9:
+                return """
+                {
+                    "topic": "विज्ञान",
+                    "grade_level": "माध्यमिक विद्यालय",
+                    "facts": [
+                        {
+                            "fact": "विज्ञान हमारे चारों ओर की दुनिया को समझने का एक तरीका है। यह हमें बताता है कि चीजें कैसे काम करती हैं, क्यों होती हैं, और कैसे हम अपने आसपास की दुनिया को बेहतर बना सकते हैं। वैज्ञानिक हमेशा नए प्रश्न पूछते हैं और उनके उत्तर खोजने का प्रयास करते हैं।",
+                            "tone": "chat"
+                        },
+                        {
+                            "fact": "प्रयोग विज्ञान का एक महत्वपूर्ण हिस्सा हैं। जब हम कोई प्रयोग करते हैं, तो हम वास्तव में एक सवाल पूछ रहे होते हैं और उसका जवाब खोजने की कोशिश कर रहे होते हैं। कभी-कभी हमें गलत जवाब मिलते हैं, लेकिन यह भी सीखने का एक हिस्सा है।",
+                            "tone": "friendly"
+                        }
+                    ]
+                }"""
+            else:
+                return """
+                {
+                    "topic": "वैज्ञानिक पद्धति",
+                    "grade_level": "उच्च विद्यालय",
+                    "facts": [
+                        {
+                            "fact": "वैज्ञानिक पद्धति एक व्यवस्थित प्रक्रिया है जिसका उपयोग वैज्ञानिक अवलोकन, परिकल्पना निर्माण, प्रयोग, और निष्कर्ष निकालने के लिए करते हैं। यह पद्धति वैज्ञानिक खोजों की आधारशिला है और इसने मानव ज्ञान को आगे बढ़ाने में महत्वपूर्ण भूमिका निभाई है।",
+                            "tone": "naration-professional"
+                        },
+                        {
+                            "fact": "वैज्ञानिक पद्धति में सबसे महत्वपूर्ण है प्रश्न पूछना और उनके उत्तर खोजने के लिए प्रमाण-आधारित दृष्टिकोण अपनाना। यह हमें मिथकों और अंधविश्वासों से दूर रखती है और वास्तविक ज्ञान की ओर ले जाती है।",
+                            "tone": "chat"
+                        }
+                    ]
+                }"""
+        else:  # English examples
+            if grade < 5:
+                return """
                 {
                     "topic": "Newton",
                     "grade_level": "Elementary school",
                     "facts": [
                         {
-                            "fact": "Hey there! Did you know that Isaac Newton was just like you—super curious about the world? When he was a kid, he always asked questions and wanted to know how things worked. Instead of just watching things happen, he tried to figure out why they happened! His curiosity helped him make some of the biggest discoveries in science. So if you love asking questions, who knows? Maybe you’ll be the next great scientist too!",
-                            "tone": "hopeful"
+                            "fact": "Did you know that Isaac Newton was just like you—super curious about the world? When he was a kid, he always asked questions and wanted to know how things worked. His curiosity helped him make some of the biggest discoveries in science!",
+                            "tone": "cheerful"
                         },
                         {
-                            "fact": "Have you ever seen an apple fall from a tree? Well, one day, Newton did too! But instead of just picking it up and eating it, he stopped and wondered, ‘Why do things always fall down? Why don’t they float up into the sky?’ He kept thinking about it and discovered something amazing—there’s a force pulling everything toward the ground. He called this force gravity! And guess what? Gravity isn’t just on Earth; it keeps the Moon going around our planet and even makes sure the planets stay in orbit around the Sun!",
+                            "fact": "Have you ever seen an apple fall from a tree? Well, one day, Newton did too! But instead of just picking it up, he wondered why things always fall down. This led him to discover gravity!",
                             "tone": "friendly"
-                        },
-                        {
-                            "fact": "Newton didn’t just figure out gravity—he also came up with three really important rules about how things move. Imagine kicking a ball. It keeps rolling until something stops it, right? That’s Newton’s First Law! The Second Law says heavier things need more force to move. That’s why pushing a toy car is easy, but pushing a real car? Nope! And the Third Law? It says that for every action, there’s an equal and opposite reaction. That’s why when you jump, the ground pushes back and you go up! These rules explain everything from riding a bike to how rockets blast into space!",
-                            "tone": "calm"
-                        },
-                        {
-                            "fact": "Newton also LOVED rainbows! He wanted to know where colors came from, so he did an experiment with a glass prism. When he shined white light through it—BOOM!—it split into all the colors of the rainbow! That’s when he realized that white light is actually made of many colors mixed together. So the next time you see a rainbow, remember—it’s all thanks to light and Newton’s curiosity!",
-                            "tone": "joyful"
-                        },
-                        {
-                            "fact": "Okay, get ready for this—Newton was SO smart that he even invented a whole new kind of math! It’s called calculus, and it helps scientists figure out super tricky things, like how fast something is moving or how planets travel through space. But don’t worry, you don’t need to learn it just yet! Just know that Newton was a total math genius, and his discoveries still help people today!",
-                            "tone": "reassuring"
-                        },
-                        {
-                            "fact": "Isaac Newton was born a REALLY long time ago—in 1643! But even though he lived so long ago, his ideas are still used today. His discoveries helped people build airplanes, explore space, and understand how the universe works. Pretty cool, right? It just goes to show that when you ask big questions and try to find the answers, you can change the world—even hundreds of years later!",
-                            "tone": "hopeful"
                         }
-                    ]        
-                }  """
-
-            elif grade<9 and grade>=5:
-                one_shot_example = """
-                System Message:
-                "You are an expert educator who provides structured facts indeatil in paragrpahs tailored to students of different grade levels. Each fact should be engaging, structured, and appropriate for the given class level. 
-                Additionally, define the tone of narration explicitly for each fact so that it can be used for Text-to-Speech (TTS) conversion. 
-                Please restrict tones to 'Cheerful', 'Friendly', 'Narration-Professional', or 'chat'."
-    
-                User Prompt:
-                "Generate structured and engaging facts about Newton for a Grade 5 student. Each fact paragraph should include a tone definition that describes how it should be narrated for clarity and engagement."
-                
-                Example Output 1:
+                    ]
+                }"""
+            elif grade < 9:
+                return """
                 {
-                    "topic": "Death",
+                    "topic": "Science",
                     "grade_level": "Middle school",
                     "facts": [
                         {
-                            "fact": "Death is a natural part of life, just like birth and growth. Every living thing—plants, animals, and people—has a life cycle, and one day, that cycle comes to an end. Even though it can be hard to think about, it’s something that everyone experiences. Understanding death helps us appreciate life and the time we have with the people we love.",
-                            "tone": "thoughtful"
+                            "fact": "Science is a way of understanding the world around us. It tells us how things work, why they happen, and how we can make our world better. Scientists are always asking new questions and trying to find answers.",
+                            "tone": "chat"
                         },
                         {
-                            "fact": "Losing someone we care about is painful, and it’s completely normal to feel sad, confused, or even angry. Grief is a natural response to loss, and everyone experiences it differently. Some people cry, some need time alone, and others find comfort in talking to friends or family. However you feel, remember that it’s okay to express your emotions and take the time you need to heal.",
-                            "tone": "empathetic"
-                        },
-                        {
-                            "fact": "Different cultures and religions have different beliefs about what happens after death. Some believe in heaven, reincarnation, or the idea that a person’s energy becomes part of the universe. Others see death as the end of a journey but believe that the impact a person made during their life lives on. No matter what someone believes, one thing is universal—memories and love don’t disappear, and the way someone influenced our lives will always stay with us.",
-                            "tone": "serious"
-                        },
-                        {
-                            "fact": "Many cultures around the world have special traditions to remember and honor those who have passed away. In Mexico, Día de los Muertos (Day of the Dead) is a time to celebrate loved ones with food, music, and decorations. In Japan, Obon is a festival where families light lanterns to guide the spirits of their ancestors. These traditions show that even though someone is gone, they are never forgotten.",
-                            "tone": "calm"
-                        },
-                        {
-                            "fact": "If you ever feel overwhelmed by loss, it’s important to reach out for support. Talking to a friend, family member, teacher, or counselor can help you process your feelings. Writing, creating art, or engaging in activities you love can also be a way to cope. Grief doesn’t follow a timeline, but over time, the pain becomes easier to carry, and the happy memories start to shine brighter than the sadness.",
+                            "fact": "Experiments are an important part of science. When we do an experiment, we're really asking a question and trying to find its answer. Sometimes we get wrong answers, but that's part of learning too!",
                             "tone": "friendly"
-                        },
-                        {
-                            "fact": "Thinking about death reminds us how important it is to make the most of our time. Every moment we spend with friends and family, every kind word, and every good deed leaves a mark. Instead of fearing death, we can focus on living fully, appreciating the present, and spreading kindness. Because in the end, the love and impact we leave behind are what truly matter.",
-                            "tone": "hopeful"
                         }
                     ]
-                }  """
-
-            elif grade>=9:
-                one_shot_example = """
-                System Message:
-                "You are an expert educator who provides structured facts indeatil in paragrpahs tailored to students of different grade levels. Each fact should be engaging, structured, and appropriate for the given class level. 
-                Additionally, define the tone of narration explicitly for each fact so that it can be used for Text-to-Speech (TTS) conversion. 
-                Please restrict tones to 'Cheerful', 'Friendly', 'Narration-Professional', or 'chat'."
-    
-                User Prompt:
-                "Generate structured and engaging facts about Newton for a Grade 12 student. Each fact paragraph should include a tone definition that describes how it should be narrated for clarity and engagement."
-                
-                Example Output 1:
+                }"""
+            else:
+                return """
                 {
-                   
-                    {
-                        "topic": "Happiness",
-                        "grade_level": "High school",
-                        "facts": [
-                            {
-                                "fact": "Happiness isn’t just a single feeling—it’s a mix of emotions, experiences, and perspectives. It can come from achieving goals, spending time with loved ones, or even something as simple as enjoying a quiet moment alone. What makes one person happy might not be the same for someone else, which is why understanding what brings you joy is one of the most valuable things you can learn about yourself.",
-                                "tone": "reflective"
-                            },
-                            {
-                                "fact": "Many people think happiness comes from success, money, or having the ‘perfect life,’ but research shows that’s not entirely true. While basic needs and financial stability are important, true happiness often comes from things like meaningful relationships, personal growth, and gratitude. The happiest people aren’t necessarily those who have everything, but those who appreciate what they have and find purpose in their daily lives.",
-                                "tone": "thought-provoking"
-                            },
-                            {
-                                "fact": "Science has a lot to say about happiness! Studies show that small, daily habits—like exercising, getting enough sleep, and practicing mindfulness—can significantly boost happiness levels. Even simple things, like smiling or helping someone else, can trigger chemical reactions in the brain that make you feel better. Happiness isn’t just about big life-changing moments; it’s built in the little things we do every day.",
-                                "tone": "informative"
-                            },
-                            {
-                                "fact": "Happiness isn’t about feeling great all the time. In fact, constantly chasing happiness can sometimes make people feel worse. Life comes with ups and downs, and experiencing sadness, frustration, or disappointment is completely normal. Instead of trying to avoid negative emotions, true happiness comes from learning how to navigate them and finding meaning even in difficult moments.",
-                                "tone": "realistic"
-                            },
-                            {
-                                "fact": "One of the strongest predictors of long-term happiness is connection—having strong, supportive relationships with friends, family, and even a community. Humans are wired for connection, and spending time with people who uplift and support you can make a huge difference in your overall well-being. Happiness grows when it’s shared, so investing in meaningful relationships is one of the best things you can do for yourself.",
-                                "tone": "supportive"
-                            },
-                            {
-                                "fact": "At its core, happiness isn’t just about what happens to you—it’s about how you respond to life. The way you think, the perspective you choose, and the meaning you find in your experiences all play a huge role in how happy you feel. It’s not about avoiding struggles but learning to appreciate the journey. Happiness isn’t a destination—it’s a way of living.",
-                                "tone": "inspiring"
-                            }
-                        ]
-                }  """             
+                    "topic": "Scientific Method",
+                    "grade_level": "High school",
+                    "facts": [
+                        {
+                            "fact": "The scientific method is a systematic process used by scientists for observation, hypothesis formation, experimentation, and drawing conclusions. This method forms the foundation of scientific discoveries and has played a crucial role in advancing human knowledge.",
+                            "tone": "naration-professional"
+                        },
+                        {
+                            "fact": "At its core, the scientific method is about asking questions and taking an evidence-based approach to finding answers. It keeps us away from myths and superstitions and leads us toward real knowledge.",
+                            "tone": "chat"
+                        }
+                    ]
+                }"""
 
-            # print(one_shot_example)
-
-            prompt = one_shot_example + f"\n\nTopic: {topic}\nGrade Level: {grade_level}\n\nGenerate three or four facts and their tones for the given topic and grade level."
-
+    def generate_response(
+        self, 
+        topic: str, 
+        grade_level: str, 
+        language: str = "English",
+        model: str = "openai/gpt-4o-mini"
+    ) -> Optional[str]:
+        """
+        Generate structured and engaging facts about the topic for the specified grade level and language.
+        
+        Args:
+            topic (str): The topic to generate facts about
+            grade_level (str): The grade level (1-12)
+            language (str): The language to generate facts in (default: "English")
+            model (str): The model to use for generation
+            
+        Returns:
+            Optional[str]: Generated facts in the specified language or None if an error occurs
+        """
+        try:
+            grade = int(grade_level)
+            lang = language.lower()
+            
+            if lang not in self._language_templates:
+                print(f"Warning: Language '{language}' not found in templates. Falling back to English.")
+                lang = "english"
+            
+            # Get language-specific template
+            template = self._language_templates[lang]
+            
+            # Get example based on grade level and language
+            example = self._get_example_by_grade(grade, language)
+            
+            # Construct prompt
+            prompt = f"""
+            System Message:
+            {template['system_msg']}
+            
+            Important Note:
+            Keep the JSON structure fields ("topic", "grade_level", "facts", "fact", "tone") in English, 
+            but generate the content in {language}.
+            
+            User Prompt:
+            "Generate structured and engaging facts about {topic} for Grade {grade_level} students in {language}."
+            
+            Example Output:
+            {example}
+            
+            Now generate three or four facts and their tones for the topic "{topic}" appropriate for Grade {grade_level} in {language}.
+            Remember to keep JSON field names in English but content in {language}.
+            """
 
             completion = self.client.chat.completions.create(
                 model=model,
                 messages=[
                     {
                         "role": "system",
-                        "content": """You are an expert educator who provides structured facts tailored to students of different grade levels. 
-                        Each fact should be engaging, structured, and appropriate for the given class level.
-                        Additionally, define the tone of narration explicitly for each fact so that it can be used for Text-to-Speech (TTS) conversion. 
-                        Please restrict tones to 'sad','thoughtful', 'friendly', 'hopeful','terrified', or 'serious'."""
+                        "content": template['system_msg']
                     },
                     {
                         "role": "user",
@@ -304,7 +332,7 @@ def respons_to_tts(response):
         tones.append(result_json['facts'][i]['tone'])
     return texts,tones
 
-# This is to extract only text and tone from the responese 
+# above function response_to_tts is to extract only text and tone from the responese 
 
 
 @app.post("/generate-facts", response_model=FactResponse)
@@ -316,8 +344,9 @@ async def generate_facts(request: FactRequest):
         if not OPENAI_API_KEY:
             raise HTTPException(status_code=500, detail="OpenAI API key is not set")
         
+        language = request.language
         response_gen = ResponseGenerator(api_key=OPENAI_API_KEY)
-        generated_facts = response_gen.generate_response(request.topic, str(request.grade_level))
+        generated_facts = response_gen.generate_response(request.topic, str(request.grade_level),language)
         
         if not generated_facts:
             raise HTTPException(status_code=500, detail="Failed to generate facts")
@@ -328,8 +357,8 @@ async def generate_facts(request: FactRequest):
         async with httpx.AsyncClient() as client:
             audio_response = await client.post(
                 f"{FastAPI_URL}/convert-to-audio",
-                json={"text": texts, "tone": tones}  
-            )
+                json={"text": texts, "tone": tones,"language":language}  
+            ) #here now we are passing the language as well to the convert-to-audio endpoint
         
         if audio_response.status_code != 200:
             raise HTTPException(status_code=500, detail="Failed to convert text to audio")
@@ -342,7 +371,8 @@ async def generate_facts(request: FactRequest):
             facts=texts,
             grade_level=request.grade_level,
             timestamp=datetime.now().isoformat(),
-            audio_urls=audio_urls  # Return the list of audio URLs
+            audio_urls=audio_urls,
+            tones=tones
         )
     
     except Exception as e:
@@ -354,36 +384,39 @@ async def generate_facts(request: FactRequest):
 async def convert_to_audio(request: AudioRequest):
     try:
         logger.info(f"Converting text to audio. Text length: {len(request.text)} characters")
-        
-        voices = ['ar-EG-ShakirNeural','ta-LK-KumarNeural','en-US-AriaNeural','en-IN-NeerjaNeural','ml-IN-SobhanaNeural','bn-IN-TanishaaNeural']
-        
-        #where
-        # voices = {
-        #     "ar-EG-ShakirNeural": "Arabic",
-        #     "ta-LK-KumarNeural": "Tamil",
-        #     "en-US-JasonNeural": "English",
-        #     "en-IN-NeerjaNeural": "Indian English",
-        #     "ml-IN-SobhanaNeural": "Malayalam",
-        #     "bn-IN-TanishaaNeural": "Bengali"
-        # }
 
-        
+        # Available voices
+        voices_dict = {
+            "Arabic": "ar-EG-ShakirNeural",
+            "Tamil": "ta-LK-KumarNeural",
+            "English": "en-US-JasonNeural",
+            "Hindi": "hi-IN-AaravNeural",
+            "Malayalam": "ml-IN-SobhanaNeural",
+            "Bengali": "bn-IN-TanishaaNeural"
+        }
+
+        lang = request.language
+        voice = voices_dict.get(lang)  # so based on the language we get from request we only generate voice for that language
+
+        if not voice:
+            raise ValueError(f"Voice for language '{lang}' not found.")
+
         # Ensure the audio_files directory exists
         os.makedirs("audio_files", exist_ok=True)
 
-        audio_files = []  # All the audio file URLs will be stored here
+        audio_files = []  # Store all generated audio file URLs
 
         for i, (text, tone) in enumerate(zip(request.text, request.tone)):
-            for j, voice in enumerate(voices, start=1):
-                language_region = "-".join(voice.split('-')[:2])
-                audio_filename = f"{language_region}_{i}_{j}.wav"
-                audio_file_path = os.path.join("audio_files", audio_filename)
+            language_region = "-".join(voice.split('-')[:2])  # Extract language-region
+            audio_filename = f"{language_region}_{i}.wav"
+            audio_file_path = os.path.join("audio_files", audio_filename)
 
-                # Convert text to speech
-                text_to_speech(text, tone, voice=voice, output_file=audio_file_path)
+            # Convert text to speech
+            text_to_speech(text, tone, voice=voice, output_file=audio_file_path)
 
-                # Store the generated audio URL
-                audio_files.append(f"{FastAPI_URL}/audio_files/{audio_filename}")
+            # Store the generated audio URL
+            audio_files.append(f"{FastAPI_URL}/audio_files/{audio_filename}")
+
         
         return AudioResponse(
             audio_url=audio_files,  # Return all audio file URLs

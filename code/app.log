@@ -406,3 +406,164 @@ audio_url
 2025-02-14 17:58:20,853 - main - INFO - Speech saved to audio_files\ml-IN_3_5.wav
 2025-02-14 17:58:23,818 - main - INFO - Speech saved to audio_files\bn-IN_3_6.wav
 2025-02-14 17:58:24,074 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-19 16:38:26,386 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 16:38:27,824 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 16:38:30,456 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-19 16:39:08,394 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 16:39:09,116 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 16:39:11,041 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-19 16:44:36,707 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 16:44:38,472 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 16:44:42,075 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-19 16:54:44,139 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 16:54:45,630 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 16:54:59,620 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 16:55:03,181 - main - INFO - Speech saved to audio_files\ar-EG_0_1.wav
+2025-02-19 16:55:06,460 - main - INFO - Speech saved to audio_files\ta-LK_0_2.wav
+2025-02-19 16:55:09,251 - main - INFO - Speech saved to audio_files\en-US_0_3.wav
+2025-02-19 16:55:12,215 - main - INFO - Speech saved to audio_files\en-IN_0_4.wav
+2025-02-19 16:55:15,324 - main - INFO - Speech saved to audio_files\ml-IN_0_5.wav
+2025-02-19 16:55:21,368 - main - INFO - Speech saved to audio_files\bn-IN_0_6.wav
+2025-02-19 16:55:24,808 - main - INFO - Speech saved to audio_files\ar-EG_1_1.wav
+2025-02-19 16:55:27,844 - main - INFO - Speech saved to audio_files\ta-LK_1_2.wav
+2025-02-19 16:55:31,318 - main - INFO - Speech saved to audio_files\en-US_1_3.wav
+2025-02-19 16:55:34,248 - main - INFO - Speech saved to audio_files\en-IN_1_4.wav
+2025-02-19 16:55:37,502 - main - INFO - Speech saved to audio_files\ml-IN_1_5.wav
+2025-02-19 16:55:40,474 - main - INFO - Speech saved to audio_files\bn-IN_1_6.wav
+2025-02-19 16:55:43,762 - main - INFO - Speech saved to audio_files\ar-EG_2_1.wav
+2025-02-19 16:55:46,878 - main - INFO - Speech saved to audio_files\ta-LK_2_2.wav
+2025-02-19 16:55:49,846 - main - INFO - Speech saved to audio_files\en-US_2_3.wav
+2025-02-19 16:55:52,807 - main - INFO - Speech saved to audio_files\en-IN_2_4.wav
+2025-02-19 16:55:55,713 - main - INFO - Speech saved to audio_files\ml-IN_2_5.wav
+2025-02-19 16:55:58,908 - main - INFO - Speech saved to audio_files\bn-IN_2_6.wav
+2025-02-19 16:56:02,493 - main - INFO - Speech saved to audio_files\ar-EG_3_1.wav
+2025-02-19 16:56:06,122 - main - INFO - Speech saved to audio_files\ta-LK_3_2.wav
+2025-02-19 16:56:09,106 - main - INFO - Speech saved to audio_files\en-US_3_3.wav
+2025-02-19 16:56:12,154 - main - INFO - Speech saved to audio_files\en-IN_3_4.wav
+2025-02-19 16:56:23,721 - main - INFO - Speech saved to audio_files\ml-IN_3_5.wav
+2025-02-19 16:56:27,294 - main - INFO - Speech saved to audio_files\bn-IN_3_6.wav
+2025-02-19 16:56:27,574 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-19 17:25:06,996 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 17:25:07,465 - openai._base_client - INFO - Retrying request to /chat/completions in 0.443450 seconds
+2025-02-19 17:25:07,909 - openai._base_client - INFO - Retrying request to /chat/completions in 0.897023 seconds
+2025-02-19 17:25:08,808 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-19 17:43:23,603 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 17:43:24,036 - openai._base_client - INFO - Retrying request to /chat/completions in 0.402418 seconds
+2025-02-19 17:43:24,439 - openai._base_client - INFO - Retrying request to /chat/completions in 0.875031 seconds
+2025-02-19 17:43:25,315 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-19 17:43:59,176 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 17:43:59,484 - openai._base_client - INFO - Retrying request to /chat/completions in 0.411394 seconds
+2025-02-19 17:43:59,898 - openai._base_client - INFO - Retrying request to /chat/completions in 0.830393 seconds
+2025-02-19 17:44:00,729 - main - ERROR - Error generating facts: 500: Failed to generate facts
+2025-02-19 17:46:31,007 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 17:46:32,781 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 17:46:39,684 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 17:46:42,860 - main - INFO - Speech saved to audio_files\ar-EG_0_1.wav
+2025-02-19 17:46:45,918 - main - INFO - Speech saved to audio_files\ta-LK_0_2.wav
+2025-02-19 17:46:48,462 - main - INFO - Speech saved to audio_files\en-US_0_3.wav
+2025-02-19 17:46:51,196 - main - INFO - Speech saved to audio_files\en-IN_0_4.wav
+2025-02-19 17:46:53,916 - main - INFO - Speech saved to audio_files\ml-IN_0_5.wav
+2025-02-19 17:46:56,638 - main - INFO - Speech saved to audio_files\bn-IN_0_6.wav
+2025-02-19 17:46:59,491 - main - INFO - Speech saved to audio_files\ar-EG_1_1.wav
+2025-02-19 17:47:02,295 - main - INFO - Speech saved to audio_files\ta-LK_1_2.wav
+2025-02-19 17:47:05,255 - main - INFO - Speech saved to audio_files\en-US_1_3.wav
+2025-02-19 17:47:07,828 - main - INFO - Speech saved to audio_files\en-IN_1_4.wav
+2025-02-19 17:47:10,476 - main - INFO - Speech saved to audio_files\ml-IN_1_5.wav
+2025-02-19 17:47:13,058 - main - INFO - Speech saved to audio_files\bn-IN_1_6.wav
+2025-02-19 17:47:16,322 - main - INFO - Speech saved to audio_files\ar-EG_2_1.wav
+2025-02-19 17:47:19,554 - main - INFO - Speech saved to audio_files\ta-LK_2_2.wav
+2025-02-19 17:47:22,088 - main - INFO - Speech saved to audio_files\en-US_2_3.wav
+2025-02-19 17:47:24,768 - main - INFO - Speech saved to audio_files\en-IN_2_4.wav
+2025-02-19 17:47:27,782 - main - INFO - Speech saved to audio_files\ml-IN_2_5.wav
+2025-02-19 17:47:30,740 - main - INFO - Speech saved to audio_files\bn-IN_2_6.wav
+2025-02-19 17:47:33,589 - main - INFO - Speech saved to audio_files\ar-EG_3_1.wav
+2025-02-19 17:47:36,571 - main - INFO - Speech saved to audio_files\ta-LK_3_2.wav
+2025-02-19 17:47:39,277 - main - INFO - Speech saved to audio_files\en-US_3_3.wav
+2025-02-19 17:47:41,852 - main - INFO - Speech saved to audio_files\en-IN_3_4.wav
+2025-02-19 17:47:44,640 - main - INFO - Speech saved to audio_files\ml-IN_3_5.wav
+2025-02-19 17:47:47,658 - main - INFO - Speech saved to audio_files\bn-IN_3_6.wav
+2025-02-19 17:47:47,929 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-19 17:48:48,546 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 17:48:49,933 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 17:48:58,220 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 17:48:59,681 - main - INFO - Speech saved to audio_files\ar-EG_0_1.wav
+2025-02-19 17:49:02,675 - main - INFO - Speech saved to audio_files\ta-LK_0_2.wav
+2025-02-19 17:49:04,211 - main - INFO - Speech saved to audio_files\en-US_0_3.wav
+2025-02-19 17:49:05,824 - main - INFO - Speech saved to audio_files\en-IN_0_4.wav
+2025-02-19 17:49:07,373 - main - INFO - Speech saved to audio_files\ml-IN_0_5.wav
+2025-02-19 17:49:08,930 - main - INFO - Speech saved to audio_files\bn-IN_0_6.wav
+2025-02-19 17:49:10,546 - main - INFO - Speech saved to audio_files\ar-EG_1_1.wav
+2025-02-19 17:49:13,611 - main - INFO - Speech saved to audio_files\ta-LK_1_2.wav
+2025-02-19 17:49:15,171 - main - INFO - Speech saved to audio_files\en-US_1_3.wav
+2025-02-19 17:49:16,755 - main - INFO - Speech saved to audio_files\en-IN_1_4.wav
+2025-02-19 17:49:18,279 - main - INFO - Speech saved to audio_files\ml-IN_1_5.wav
+2025-02-19 17:49:19,823 - main - INFO - Speech saved to audio_files\bn-IN_1_6.wav
+2025-02-19 17:49:21,372 - main - INFO - Speech saved to audio_files\ar-EG_2_1.wav
+2025-02-19 17:49:24,377 - main - INFO - Speech saved to audio_files\ta-LK_2_2.wav
+2025-02-19 17:49:25,962 - main - INFO - Speech saved to audio_files\en-US_2_3.wav
+2025-02-19 17:49:27,513 - main - INFO - Speech saved to audio_files\en-IN_2_4.wav
+2025-02-19 17:49:29,007 - main - INFO - Speech saved to audio_files\ml-IN_2_5.wav
+2025-02-19 17:49:30,601 - main - INFO - Speech saved to audio_files\bn-IN_2_6.wav
+2025-02-19 17:49:32,177 - main - INFO - Speech saved to audio_files\ar-EG_3_1.wav
+2025-02-19 17:49:34,972 - main - INFO - Speech saved to audio_files\ta-LK_3_2.wav
+2025-02-19 17:49:36,562 - main - INFO - Speech saved to audio_files\en-US_3_3.wav
+2025-02-19 17:49:38,088 - main - INFO - Speech saved to audio_files\en-IN_3_4.wav
+2025-02-19 17:49:39,639 - main - INFO - Speech saved to audio_files\ml-IN_3_5.wav
+2025-02-19 17:49:41,140 - main - INFO - Speech saved to audio_files\bn-IN_3_6.wav
+2025-02-19 17:49:41,406 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-19 18:01:47,109 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 18:01:48,860 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:01:57,508 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 18:02:00,526 - main - INFO - Speech saved to audio_files\hi-IN_0.wav
+2025-02-19 18:02:03,143 - main - INFO - Speech saved to audio_files\hi-IN_1.wav
+2025-02-19 18:02:05,944 - main - INFO - Speech saved to audio_files\hi-IN_2.wav
+2025-02-19 18:02:08,660 - main - INFO - Speech saved to audio_files\hi-IN_3.wav
+2025-02-19 18:02:08,922 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-19 18:04:29,875 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 18:04:31,369 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:04:37,662 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 18:04:40,263 - main - INFO - Speech saved to audio_files\hi-IN_0.wav
+2025-02-19 18:04:43,026 - main - INFO - Speech saved to audio_files\hi-IN_1.wav
+2025-02-19 18:04:45,722 - main - INFO - Speech saved to audio_files\hi-IN_2.wav
+2025-02-19 18:04:48,352 - main - INFO - Speech saved to audio_files\hi-IN_3.wav
+2025-02-19 18:04:48,609 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-19 18:16:17,196 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 18:16:18,517 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:16:29,880 - main - ERROR - Error generating facts: 
+2025-02-19 18:16:31,624 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 18:16:34,566 - main - INFO - Speech saved to audio_files\hi-IN_0.wav
+2025-02-19 18:16:37,442 - main - INFO - Speech saved to audio_files\hi-IN_1.wav
+2025-02-19 18:16:40,243 - main - INFO - Speech saved to audio_files\hi-IN_2.wav
+2025-02-19 18:16:43,090 - main - INFO - Speech saved to audio_files\hi-IN_3.wav
+2025-02-19 18:17:40,507 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 18:17:41,989 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:17:48,551 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 18:17:51,266 - main - INFO - Speech saved to audio_files\hi-IN_0.wav
+2025-02-19 18:17:54,438 - main - INFO - Speech saved to audio_files\hi-IN_1.wav
+2025-02-19 18:17:57,626 - main - INFO - Speech saved to audio_files\hi-IN_2.wav
+2025-02-19 18:18:00,514 - main - INFO - Speech saved to audio_files\hi-IN_3.wav
+2025-02-19 18:18:00,794 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-19 18:21:00,118 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 18:21:01,442 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:21:08,143 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 18:21:11,451 - main - INFO - Speech saved to audio_files\ar-EG_0.wav
+2025-02-19 18:21:14,431 - main - INFO - Speech saved to audio_files\ar-EG_1.wav
+2025-02-19 18:21:17,333 - main - INFO - Speech saved to audio_files\ar-EG_2.wav
+2025-02-19 18:21:20,403 - main - INFO - Speech saved to audio_files\ar-EG_3.wav
+2025-02-19 18:21:20,664 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-19 18:29:54,277 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 18:29:55,286 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:30:03,430 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 18:30:06,102 - main - INFO - Speech saved to audio_files\ml-IN_0.wav
+2025-02-19 18:30:08,874 - main - INFO - Speech saved to audio_files\ml-IN_1.wav
+2025-02-19 18:30:11,593 - main - INFO - Speech saved to audio_files\ml-IN_2.wav
+2025-02-19 18:30:15,217 - main - INFO - Speech saved to audio_files\ml-IN_3.wav
+2025-02-19 18:30:15,469 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
+2025-02-19 18:31:41,285 - main - INFO - Generating facts for topic: Newton, grade level: 5
+2025-02-19 18:31:42,600 - httpx - INFO - HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-19 18:31:50,212 - main - INFO - Converting text to audio. Text length: 4 characters
+2025-02-19 18:31:52,929 - main - INFO - Speech saved to audio_files\bn-IN_0.wav
+2025-02-19 18:31:55,948 - main - INFO - Speech saved to audio_files\bn-IN_1.wav
+2025-02-19 18:31:58,647 - main - INFO - Speech saved to audio_files\bn-IN_2.wav
+2025-02-19 18:32:01,504 - main - INFO - Speech saved to audio_files\bn-IN_3.wav
+2025-02-19 18:32:01,765 - httpx - INFO - HTTP Request: POST http://127.0.0.1:8000/convert-to-audio "HTTP/1.1 200 OK"
