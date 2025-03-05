@@ -44,7 +44,7 @@ AZURE_SERVICE_REGION = "eastus"
 speech_config = speechsdk.SpeechConfig(subscription=AZURE_SPEECH_KEY, region=AZURE_SERVICE_REGION)
 
 # OpenAI Configuration
-OPENAI_API_KEY = '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' #os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
 
 # Below we have defined the Pydantic mode for the request and response of the API 
